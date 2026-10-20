@@ -1,0 +1,205 @@
+Buy ~~€18~~ → Sell **€65** Stone Island **+€110** AF1 ~~€22~~ → **€60**
+
+# The Vinted Reselling Playbook
+
+Sourcing, real price ranges, AI photos, a sniper alert bot and a bookkeeping system. Everything from first flip to a steady side income.
+
+[Open the price explorer](#prices)
+
+**0**chapters of premium know-how
+
+**0**% max. buy price of sold median
+
+**0**days target time to sell
+
+**0**day launch plan
+
+## Price explorer
+
+Typical European used-condition ranges. Pick a category, then compare what you should pay with what it sells for. Always confirm with sold listings before buying.
+
+Buy priceSell price
+
+## Profit calculator
+
+Rule: pay at most 60% of the expected sale price, minus your costs. Aim for 40–50%.
+
+Buy price (€) Expected sale (€) Costs: packing, cleaning (€)
+
+Profit**0**
+
+ROI**0**
+
+Max buy price**0**
+
+Verdict**–**
+
+## AI photos with Gemini
+
+Use Gemini’s image editing (nicknamed Nano Banana) to clean backgrounds and balance light. Never alter the item itself.
+
+Golden rule: the item in the photo must be the item the buyer receives. No hidden stains, no changed logos, no changed colours.
+
+### Prompts to copy
+
+```
+CopyKeep the garment exactly as it is. Do not change colour, logo, texture, stains or proportions. Replace only the background with a seamless light grey studio surface, soft even lighting, subtle natural shadow. Keep the same camera angle.
+```
+
+```
+CopyKeep the shoes exactly the same, including scuffs, creases and sole wear. Place them on a seamless white studio floor with a soft realistic shadow. Neutral lighting. Do not alter colours or logos.
+```
+
+### 1. Shoot clean
+
+AI improves a good photo. It cannot rescue a bad one.
+
+### 2. Edit the cover
+
+Background and light only. Compare against the original at full zoom.
+
+### 3. Keep real details
+
+Labels, flaws and measurements stay unedited. That builds trust.
+
+## Studio and packing kit
+
+### Equipment checklist
+
+0 of 9 ready
+
+### Packing that wins reviews
+
+Fold neatly, run a lint roller or fabric shaver, steam out wrinkles, spritz a light fabric scent, then bag in a clean Amazon-style poly mailer. Seal, photograph the parcel, ship within 24 hours.
+
+## Stock and journal system
+
+Give every item an ID, a shelf code and a status. Review your numbers every Sunday.
+
+| ID | Item | Shelf | Bought | Listed | Sold | Profit | Days |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| A-001 | RL cable knit M | A1 | €9 | €55 | €48 | €37.5 | 12 |
+| S-014 | AF1 white 43 | B2 | €22 | €65 | €58 | €34.5 | 9 |
+| J-007 | True Religion Ricky | C1 | €24 | €85 | – | – | 31 |
+
+Weekly KPIs: profit, average days to sell, sell-through rate and stock value at cost. Anything older than 45 days gets repriced.
+
+## Build your own deal alert bot
+
+A sniper bot watches new listings for your exact brands and sizes and pings you when a price is far below your sold median. You still buy manually.
+
+Search URLs→Fetch new listings→Score vs. median→Telegram alert→You buy
+
+```
+Copyimport time, requests
+
+MEDIANS = {"stone island overshirt": 150, "air force 1": 60}
+TG = "https://api.telegram.org/bot<TOKEN>/sendMessage"
+seen = set()
+
+def fetch_listings(query):
+    # Fill in with a source you are allowed to use,
+    # e.g. email alerts from your saved searches.
+    return []  # [{"id":..., "title":..., "price":..., "url":...}]
+
+def score(item, median):
+    return 1 - item["price"] / median   # 0.5 = 50% under median
+
+while True:
+    for q, med in MEDIANS.items():
+        for it in fetch_listings(q):
+            if it["id"] in seen: continue
+            seen.add(it["id"])
+            if score(it, med) >= 0.45:
+                requests.post(TG, json={"chat_id": "<ID>",
+                  "text": f'{it["title"]} €{it["price"]}\n{it["url"]}'})
+    time.sleep(120)
+```
+
+Vinted has no public API, and its terms restrict automated scraping. Accounts can be limited or banned. Safer routes: Vinted’s own saved-search push notifications and email alerts, a slow polling interval and strictly personal use. Never automate buying or messaging.
+
+## Launch your own store
+
+A store on your own domain gives you a brand, an email list and no platform risk. Build it for free with GitHub for the code and Vercel for hosting.
+
+Code in GitHub→Vercel deploys on every push→Your domain→Stripe Payment Links
+
+### 1. Repo
+
+Create a GitHub account and a new repository called **store**. Add **index.html**, **products.json** and a folder **img** for your AI-cleaned photos.
+
+### 2. Deploy
+
+On vercel.com choose Add New Project, import the repo and press Deploy. Every later push to GitHub updates the live site in about a minute.
+
+### 3. Domain
+
+Buy a domain (about €10 per year), add it in Vercel under Domains and follow the DNS steps. HTTPS is automatic.
+
+### 4. Payments
+
+For one-off second-hand pieces, create a Stripe Payment Link per item with quantity 1. No server, no cart code. Deactivate the link once it sells.
+
+### 5. Traffic
+
+Instagram, TikTok and Pinterest drive visitors to the store. Post item videos and link to the shop in your bio.
+
+### 6. Alternative
+
+Want carts, shipping rules and inventory built in? Shopify costs a monthly fee but needs no code.
+
+### Terminal commands
+
+```
+Copygit init
+git add .
+git commit -m "first store version"
+git branch -M main
+git remote add origin https://github.com/YOUR-NAME/store.git
+git push -u origin main
+```
+
+### products.json: one line per item
+
+```
+Copy[
+ {"id":"A-001","title":"Ralph Lauren cable knit M",
+  "price":55,"img":"img/a001.jpg",
+  "pay":"https://buy.stripe.com/XXXX","sold":false}
+]
+```
+
+```
+Copy<div id="shop"></div>
+<script>
+fetch('products.json').then(r=>r.json()).then(list=>{
+ shop.innerHTML=list.filter(p=>!p.sold).map(p=>
+  `<a href="${p.pay}"><img src="${p.img}" width="240">
+   <h3>${p.title}</h3><b>€${p.price}</b></a>`).join('')
+})
+</script>
+```
+
+Vinted’s rules forbid steering Vinted buyers to outside payments or shops. Do not message them with your store link. Build your audience on social media instead.
+
+EU legal basics: show an imprint (Impressum) with your name and address, terms, a privacy policy, the 14-day withdrawal right for consumers and your VAT status. Rules differ by country, so check them or ask an accountant.
+
+## 90-day launch plan
+
+**Days 1–14: Foundation**
+
+Set up the account, build the photo corner, sell 5 items from your closet, learn sold-price research.
+
+**Days 15–45: First flips**
+
+Buy 20–30 items under your max buy price. List 3–5 per day. Journal every sale.
+
+**Days 46–75: Specialise**
+
+Double down on the 3 best brands. Add saved searches and deal alerts.
+
+**Days 76–90: Scale**
+
+Reinvest profit, test shoes or phones, and check tax rules in your country.
+
+Price ranges are estimates and not financial or tax advice. Brand names belong to their owners; this guide is independent and not affiliated with Vinted.
